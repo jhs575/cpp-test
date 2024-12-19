@@ -21,64 +21,52 @@ void printList(Node* head) {
     cout << endl;
 }
 
-void insertAtHead(Node*& head, int value) {
-    Node* newNode = new Node(value);
-    newNode->next = head;
-    head = newNode;
-}
-
-void insertAtTail(Node*& head, int value) {
-    Node* newNode = new Node(value);
-    if (!head) {
-        head = newNode;
-        return;
-    }
+Node* createLinkedList() {
+    int value;
+    cin >> value;
+    
+    if (value == -1) return nullptr; 
+    
+    Node* head = new Node(value); 
     Node* current = head;
-    while (current->next) {
-        current = current->next;
+    
+    while (cin >> value && value != -1) {
+        Node* newNode = new Node(value);
+        current->next = newNode;
+        current = newNode;
     }
-    current->next = newNode;
+    
+    return head;
 }
 
-void deleteAtIndex(Node*& head, int index) {
+void removeDuplicates(Node* head) {
     if (!head) return;
     
-    if (index == 0) {
-        Node* temp = head;
-        head = head->next;
-        delete temp;
-        return;
-    }
-
     Node* current = head;
-    for (int i = 0; current && i < index - 1; i++) {
+    while (current) {
+        Node* prev = current;
+        Node* temp = current->next;
+        
+        while (temp) {
+            if (temp->data == current->data) {
+                prev->next = temp->next;
+                delete temp;
+                temp = prev->next; 
+            } else {
+                prev = temp;
+                temp = temp->next;
+            }
+        }
         current = current->next;
     }
-
-    if (!current || !current->next) return;
-
-    Node* temp = current->next;
-    current->next = current->next->next;
-    delete temp;
 }
 
 int main() {
-    int Q;
-    cin >> Q;
-    Node* head = nullptr;
 
-    for (int i = 0; i < Q; i++) {
-        int X, V;
-        cin >> X >> V;
+    Node* head = createLinkedList();
+    removeDuplicates(head);
+    printList(head);
+    
 
-        if (X == 0) {
-            insertAtHead(head, V);
-        } else if (X == 1) {
-            insertAtTail(head, V);
-        } else if (X == 2) {
-            deleteAtIndex(head, V);
-        }
-        printList(head);
-    }
     return 0;
 }
